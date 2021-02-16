@@ -1,66 +1,140 @@
-// To-Do
-// 1. Ending count
-// 2. Entity
-// 3. Checkpoint
-// 4. Invetory
-// 5. Func Time Travel
-
 /*
       Kelompok 3 Tugas Besar PBO
       Anggota Kelompok  : Erie Sudewo
                           I.P. Restu I.
                           Raihan Iqbal Pasya
-      Jenis Software    : Game
-      Nama Software     : Time Rift
+      Jenis Software    : Manajemen
+      Nama Software     : Money Management
 */
 
 var prompt = require('prompt-sync')();
 
-class entity {
-    constructor(name, hitPoint, experience, atk) {
+let incList = []
+let expList = []
+let history = []
+
+class user {
+    constructor(name, money) {
         this.name = name
-        this.hitPoint = hitPoint
-        this.experience = experience
-        this.atk = atk
+        this.money = money
     }
 }
 
-class player extends entity {
-    constructor(name, hitPoint, experience, atk, choice, inventory) {
-        super(name, hitPoint, experience, atk)
-        this.choice = choice
-        this.inventory = inventory
+class expense {
+    constructor(stuff, exp) {
+        this.stuff = stuff
+        this.exp = exp
     }
 }
 
-class boss extends entity {
-    constructor(hitPoint, experience, atk) {
-        super(name, hitPoint, experience, atk)
+class income {
+    constructor(_from, inc) {
+        this._from = _from
+        this.inc = inc
     }
 }
 
-class item extends entity {
-    constructor(regen, hitPoint, expBoost, experience, atkBoost, atk) {
-        super(hitPoint, experience, atk)
-        this.regen = regen
-        this.expBoost = expBoost
-        this.atkBoost = atkBoost
+function check(exp) {
+}
+
+function sum() {
+    for (let i of incList)
+        total += i.inc
+
+    incList = []
+}
+
+function min() {
+    for (let i of expList)
+        total -= i.exp
+
+    expList = []
+}
+
+function showHistory() {
+    for (let log of history) {
+        if (log.constructor === income) {
+            console.log('Aktifitas Pemasukan');
+            console.log(`Keterangan : ${log._from}`);
+            console.log(`Jumlah     : ${log.inc}`);
+            console.log();
+        } else if (log.constructor === expense) {
+            console.log('Aktifitas Pengeluaran');
+            console.log(`Keterangan : ${log.stuff}`);
+            console.log(`Jumlah     : ${log.exp}`);
+            console.log();
+        }
     }
 }
 
-class weapon {
-    constructor(wpAtk, wpExp) {
-        this.wpAtk = wpAtk
-        this.wpExp = wpExp
-    }
+function addInc() {
+    console.log();
+    const _from = prompt('Asal Pemasukkan   : ')
+    const inc = Number(prompt('Jumlah Pemasukkan : '))
+
+    incList.push(new income(_from, inc))
+    history.push(new income(_from, inc))
+    console.log()
+    console.log('Data berhasil diupdate')
+    console.log()
+    console.log('================================')
 }
 
-console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
-console.log('***************************[Time Rift]*******************************');
-console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
+function addExp() {
+    console.log();
+    const stuff = prompt('Asal Pengeluaran    : ')
+    const exp = Number(prompt('Jumlah Pengeluaran  : '))
+
+    let result = total - exp
+    if (result < 0) {
+        console.log('Error')
+        return;
+    }
+
+    expList.push(new expense(stuff, exp))
+    history.push(new expense(stuff, exp))
+    console.log()
+    console.log('Data berhasil diupdate')
+    console.log()
+    console.log('================================')
+    min()
+}
+
+console.log('***********************[Money Management]****************************');
+const Person = new user(
+    prompt('Masukkan Nama         : '),
+    Number(prompt('Masukkan Jumlah Uang  : '))
+)
 console.log();
-console.log('.');
-console.log('..');
-console.log('...');
 
-const player
+let total = Person.money
+
+let opt = false
+
+do {
+    console.log('*********************************************************************');
+    console.log(`Selamat datang ${Person.name}`);
+    console.log(`Total uang anda sebesar Rp.${total}`);
+    console.log();
+    console.log('1. Input Pemasukan');
+    console.log('2. Input Pengeluaran');
+    console.log('3. Tampilkan Aktifitas keuangan');
+    console.log('4. Keluar Aplikasi');
+    console.log();
+    let choice = prompt('Masukkan pilihan anda  : ')
+    switch (choice) {
+        case '1':
+            addInc()
+            sum()
+            break;
+        case '2':
+            addExp()
+            break;
+        case '3':
+            showHistory()
+            break;
+        case '4':
+            opt = true
+            break;
+    }
+} while (opt != true);
